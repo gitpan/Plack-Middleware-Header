@@ -8,7 +8,7 @@ __PACKAGE__->mk_accessors(qw(set append unset));
  
 use Plack::Util;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
  
 sub call {
     my($self, $env) = @_;
@@ -48,6 +48,7 @@ Plack::Middleware::Header - modify HTTP response headers
         unset => ['X-Plack-Three'];
       $app;
   };
+
 =head1 DESCRIPTION
  
 Plack::Middleware::Header

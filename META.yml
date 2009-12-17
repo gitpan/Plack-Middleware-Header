@@ -21,7 +21,9 @@ no_index:
     - xt
 requires:
   Filter::Util::Call: 0
+  Plack::Middleware: 0
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.01
+  repository: git://github.com/nihen/Plack-Middleware-Header.git
+version: 0.02
