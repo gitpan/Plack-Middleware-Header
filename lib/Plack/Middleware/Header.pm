@@ -8,25 +8,29 @@ __PACKAGE__->mk_accessors(qw(set append unset));
  
 use Plack::Util;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
  
 sub call {
-    my($self, $env) = @_;
+    my $self = shift; 
+    my $res  = $self->app->(@_);
  
-    my $res = $self->app->($env);
- 
-    my $headers = $res->[1];
-    if ( $self->set ) {
-        Plack::Util::header_iter($self->set, sub {Plack::Util::header_set($headers, @_)});
-    }
-    if ( $self->append ) {
-        push @$headers, @{$self->append};
-    }
-    if ( $self->unset ) {
-        Plack::Util::header_remove($headers, $_) for @{$self->unset};
-    }
- 
-    return $res;
+    $self->response_cb(
+        $res,
+        sub {
+            my $res = shift;
+            my $headers = $res->[1];
+
+            if ( $self->set ) {
+                Plack::Util::header_iter($self->set, sub {Plack::Util::header_set($headers, @_)});
+            }
+            if ( $self->append ) {
+                push @$headers, @{$self->append};
+            }
+            if ( $self->unset ) {
+                Plack::Util::header_remove($headers, $_) for @{$self->unset};
+            }
+        }
+    );
 }
  
 1;
@@ -41,6 +45,7 @@ Plack::Middleware::Header - modify HTTP response headers
  
   use Plack::Builder;
  
+  my $app = sub {['200', [], ['hello']]};
   builder {
       enable 'Header',
         set => ['X-Plack-One' => '1'],
